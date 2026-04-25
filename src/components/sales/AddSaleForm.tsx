@@ -38,7 +38,7 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
           const errorData = await response.json();
           setError(errorData.error || 'Failed to fetch products');
         }
-      } catch (err) {
+      } catch {
         setError('Network error: Could not fetch products');
       }
     }
@@ -88,8 +88,8 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to add sale');
     } finally {
       setLoading(false);
     }

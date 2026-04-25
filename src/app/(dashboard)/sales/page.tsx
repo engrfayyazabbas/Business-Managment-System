@@ -38,7 +38,7 @@ export default function SalesPage() {
     fetchSales();
   }, [fetchSales]);
 
-  const handleFilterChange = (newFilters: any) => {
+  const handleFilterChange = (newFilters: { startDate: string; endDate: string; productId: string }) => {
     setFilters(newFilters);
   };
 
