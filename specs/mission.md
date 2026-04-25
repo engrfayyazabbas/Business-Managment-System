@@ -23,7 +23,14 @@ GoldenPhoenix Noodles is a small food business selling **two products: Noodles a
 
 - **Total Users:** 2–4 (small team, equal access)
 - **User Roles:** All users share **equal access** — no admin/staff distinction
-- **Authentication:** Login with username & password (secured)
+- **Authentication:** Login with email & password (secured)
+- **Registration Strategy:** Public registration is **disabled**. The business owner creates all user accounts manually via the Supabase Dashboard. This ensures only authorized staff can access the system.
+
+---
+
+## Currency
+
+> **All monetary values in the system are in Pakistani Rupees (PKR).**
 
 ---
 
@@ -50,10 +57,10 @@ GoldenPhoenix Noodles is a small food business selling **two products: Noodles a
 
 ## Products
 
-| # | Product | Variants | Notes |
-|---|---------|----------|-------|
-| 1 | Noodles | None | Single product, tracked by quantity sold |
-| 2 | Momos | None | Single product, tracked by quantity sold |
+| # | Product | Variants | Sales Unit | Notes |
+|---|---------|----------|-----------|-------|
+| 1 | Noodles | None | Per pack | Tracked by packs sold |
+| 2 | Momos | None | Per piece | Tracked by pieces sold |
 
 ---
 
@@ -68,13 +75,23 @@ GoldenPhoenix Noodles is a small food business selling **two products: Noodles a
 
 ---
 
+## Data Ownership & Backup
+
+- **Data is owned by GoldenPhoenix Noodles** — stored on Supabase's cloud infrastructure
+- **Backup Strategy:** Supabase provides daily automatic backups on paid plans. On the free tier, data can be exported manually via the Supabase Dashboard (CSV/SQL dump)
+- **Future Enhancement:** CSV/Excel export feature will be added post-launch for monthly accounting reports
+- **Migration Plan:** If Supabase free tier is discontinued, data can be exported and migrated to any PostgreSQL host
+
+---
+
 ## Success Criteria
 
 - [ ] All 2–4 users can log in and access the system simultaneously
-- [ ] Daily sales for Noodles and Momos are recorded and viewable
+- [ ] Daily sales for Noodles (per pack) and Momos (per piece) are recorded and viewable
 - [ ] Expenses can be created, categorized, edited, and deleted
 - [ ] Expense categories are fully customizable (create/delete)
 - [ ] Inventory levels for Flour and Packaging are trackable
 - [ ] Dashboard displays meaningful charts (profit/loss, sales trends, expense breakdown)
 - [ ] App is deployed online and accessible from any device with a browser
 - [ ] Total hosting cost is minimal (free or under $5/month)
+- [ ] All monetary values displayed in PKR

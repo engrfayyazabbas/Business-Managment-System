@@ -50,11 +50,12 @@
 
 ## Detailed Stack Justification
 
-### Frontend — Next.js 14
+### Frontend — Next.js 14 (Pinned)
 
 - **Why not plain HTML/JS?** The app has multiple pages (dashboard, sales, expenses, inventory), authentication, and API calls. A framework keeps things organized.
 - **Why Next.js over Vite+React?** Next.js includes API routes (backend), file-based routing, and free Vercel hosting. No need for a separate backend server.
 - **App Router vs Pages Router?** Using **App Router** (default in Next.js 14) for modern React Server Components and better performance.
+- **Why Next.js 14 and not 15?** Next.js 14 is chosen for **stability** — it has more community tutorials, broader Supabase integration docs, and well-tested patterns. Upgrading to 15 can be done later when the ecosystem matures.
 
 ### Styling — Vanilla CSS
 
@@ -71,7 +72,7 @@
 
 ### Database — Supabase (PostgreSQL)
 
-- **Free tier:** 500MB storage, 50,000 monthly active users, unlimited API requests
+- **Free tier limits:** 500MB database storage, 1GB file storage, 2GB bandwidth, 50K monthly active users (Auth), unlimited API requests
 - **PostgreSQL:** Battle-tested, relational database — perfect for structured business data
 - **Built-in Auth:** No need to build login/registration from scratch
 - **Dashboard:** Web-based admin panel to view/edit data directly
@@ -129,6 +130,7 @@
     "react": "^18.x",
     "react-dom": "^18.x",
     "@supabase/supabase-js": "^2.x",
+    "@supabase/ssr": "^0.5.x",
     "chart.js": "^4.x",
     "react-chartjs-2": "^5.x"
   },
@@ -139,4 +141,25 @@
 }
 ```
 
-> **Total dependencies: 6** — Keeping it minimal and maintainable.
+> **Total dependencies: 7** — Keeping it minimal and maintainable.
+> 
+> `@supabase/ssr` is required for proper cookie-based auth with Next.js App Router and Server Components.
+
+---
+
+## Environment Variables
+
+The following variables must be set in `.env.local` for local development and in Vercel's environment settings for production:
+
+| Variable | Description | Where to Find |
+|----------|-------------|---------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | Supabase Dashboard → Settings → API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anonymous key | Supabase Dashboard → Settings → API |
+
+```bash
+# .env.local (example)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+> ⚠️ **Never commit `.env.local` to Git.** It is already included in `.gitignore`.

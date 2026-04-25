@@ -14,6 +14,8 @@
 
 **Estimated Total: ~14 working days (2–3 weeks)**
 
+> ⚠️ *Timeline assumes focused full-time work. For part-time development, add a 50% buffer (~4 weeks total).*
+
 ---
 
 ## Phase 0 — Project Setup & Planning *(Day 1)*
@@ -35,30 +37,104 @@
 ### Database Schema (Initial)
 
 ```sql
--- Users (handled by Supabase Auth)
+-- =============================================
+-- Users: Handled by Supabase Auth (auth.users)
+-- No custom users table needed.
+-- =============================================
 
 -- Products
-products (id, name, price_per_unit, created_at)
+CREATE TABLE products (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  sales_unit TEXT NOT NULL,          -- 'pack' for Noodles, 'piece' for Momos
+  price_per_unit DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
 
 -- Sales
-sales (id, product_id, quantity, unit_price, total_amount, sale_date, created_by, created_at)
+CREATE TABLE sales (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
+  quantity INTEGER NOT NULL CHECK (quantity > 0),
+  unit_price DECIMAL(10, 2) NOT NULL CHECK (unit_price >= 0),
+  total_amount DECIMAL(12, 2) GENERATED ALWAYS AS (quantity * unit_price) STORED,
+  sale_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  created_by UUID NOT NULL REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
 
 -- Expense Categories
-expense_categories (id, name, created_by, created_at)
+CREATE TABLE expense_categories (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  created_by UUID NOT NULL REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
 
 -- Expenses
-expenses (id, category_id, description, amount, expense_date, created_by, created_at)
+CREATE TABLE expenses (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  category_id UUID NOT NULL REFERENCES expense_categories(id) ON DELETE RESTRICT,
+  description TEXT,
+  amount DECIMAL(12, 2) NOT NULL CHECK (amount > 0),
+  expense_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  created_by UUID NOT NULL REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
 
 -- Inventory Items
-inventory_items (id, name, unit, current_stock, created_at)
+CREATE TABLE inventory_items (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  unit TEXT NOT NULL,               -- 'kg', 'pieces', 'packs', etc.
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
 
 -- Inventory Transactions
-inventory_transactions (id, item_id, type[purchase|consumption], quantity, notes, transaction_date, created_by, created_at)
+CREATE TABLE inventory_transactions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  item_id UUID NOT NULL REFERENCES inventory_items(id) ON DELETE RESTRICT,
+  type TEXT NOT NULL CHECK (type IN ('purchase', 'consumption')),
+  quantity DECIMAL(10, 2) NOT NULL CHECK (quantity > 0),
+  notes TEXT,
+  transaction_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  created_by UUID NOT NULL REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+-- Computed View: Current stock levels (derived, not stored)
+-- Stock = SUM(purchases) - SUM(consumptions)
+CREATE VIEW inventory_stock AS
+SELECT
+  i.id,
+  i.name,
+  i.unit,
+  COALESCE(SUM(CASE WHEN t.type = 'purchase' THEN t.quantity ELSE 0 END), 0)
+  - COALESCE(SUM(CASE WHEN t.type = 'consumption' THEN t.quantity ELSE 0 END), 0)
+  AS current_stock
+FROM inventory_items i
+LEFT JOIN inventory_transactions t ON t.item_id = i.id
+GROUP BY i.id, i.name, i.unit;
+```
+
+> **Note:** `current_stock` is **not stored** in `inventory_items`. It is computed dynamically via the `inventory_stock` view (sum of purchases minus consumptions). This prevents data sync issues.
+
+### Row-Level Security (RLS) Policy
+
+> **All authenticated users can read and write all rows.** No row-level user restrictions. Since all 2–4 users have equal access, the RLS policy is simple:
+
+```sql
+-- Example RLS policy (applied to each table)
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users full access" ON products
+  FOR ALL USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+-- Repeat for: sales, expense_categories, expenses, inventory_items, inventory_transactions
 ```
 
 ### Deliverables
 - ✅ Running Next.js app (locally + deployed on Vercel)
-- ✅ Supabase database with all tables created
+- ✅ Supabase database with all tables created and RLS enabled
 - ✅ Base layout with navigation sidebar
 
 ---
@@ -71,17 +147,34 @@ inventory_transactions (id, item_id, type[purchase|consumption], quantity, notes
 
 ### Tasks
 - [ ] Create login page (email + password)
-- [ ] Create registration page (for initial 2–4 users)
-- [ ] Implement Supabase Auth integration
+- [ ] Implement Supabase Auth integration with `@supabase/ssr`
 - [ ] Set up auth context/provider for session management
 - [ ] Create middleware for protected routes
 - [ ] Add user display in header (name + logout button)
-- [ ] Seed initial product data (Noodles, Momos)
+- [ ] Seed initial product and inventory data (see below)
+- [ ] Create initial user accounts via Supabase Dashboard (no public registration)
+
+### Seed Data
+
+```sql
+-- Insert products
+INSERT INTO products (name, sales_unit, price_per_unit) VALUES
+  ('Noodles', 'pack', 0.00),   -- Owner sets actual price
+  ('Momos', 'piece', 0.00);    -- Owner sets actual price
+
+-- Insert initial inventory items
+INSERT INTO inventory_items (name, unit) VALUES
+  ('Flour', 'kg'),
+  ('Packaging', 'packs');
+```
+
+> **Note:** The owner should update `price_per_unit` to actual selling prices after initial setup.
 
 ### Deliverables
-- ✅ Working login/registration flow
+- ✅ Working login flow (no public registration page)
 - ✅ All app pages are protected (require login)
 - ✅ User session persists across page refreshes
+- ✅ Products and inventory items seeded in database
 
 ---
 
@@ -106,8 +199,8 @@ inventory_transactions (id, item_id, type[purchase|consumption], quantity, notes
 - [ ] Build API routes
   - `POST /api/sales` — create new sale
   - `GET /api/sales` — list sales (with date/product filters)
+  - `PUT /api/sales/[id]` — update a sale record
   - `DELETE /api/sales/[id]` — delete a sale record
-- [ ] Add edit functionality for sales entries
 
 ### Deliverables
 - ✅ Staff can record each sale in under 10 seconds
@@ -175,11 +268,13 @@ inventory_transactions (id, item_id, type[purchase|consumption], quantity, notes
   - Table of all inventory transactions
   - Filter by item, type, date
 - [ ] Build API routes
-  - `GET /api/inventory` — current stock levels
+  - `GET /api/inventory` — current stock levels (from `inventory_stock` view)
   - `POST /api/inventory/items` — add new inventory item
+  - `PUT /api/inventory/items/[id]` — update inventory item (rename, change unit)
+  - `DELETE /api/inventory/items/[id]` — delete inventory item
   - `POST /api/inventory/transactions` — record transaction
   - `GET /api/inventory/transactions` — list transactions
-- [ ] Auto-update `current_stock` on each transaction
+- [ ] Stock is computed dynamically via `inventory_stock` view (no manual sync needed)
 
 ### Deliverables
 - ✅ Real-time stock levels visible for Flour and Packaging
