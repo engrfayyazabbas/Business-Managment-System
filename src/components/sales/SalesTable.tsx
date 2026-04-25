@@ -104,7 +104,7 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
             ) : (
               sales.map((sale) => (
                 <tr key={sale.id}>
-                  <td>
+                  <td data-label="Date">
                     {editingId === sale.id ? (
                       <input
                         type="date"
@@ -116,8 +116,8 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
                       new Date(sale.sale_date).toLocaleDateString()
                     )}
                   </td>
-                  <td>{sale.products.name}</td>
-                  <td>
+                  <td data-label="Product">{sale.products.name}</td>
+                  <td data-label="Quantity">
                     {editingId === sale.id ? (
                       <input
                         type="number"
@@ -130,7 +130,7 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
                       `${sale.quantity} ${sale.products.sales_unit}${sale.quantity > 1 ? 's' : ''}`
                     )}
                   </td>
-                  <td>
+                  <td data-label="Unit Price">
                     {editingId === sale.id ? (
                       <input
                         type="number"
@@ -144,8 +144,8 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
                       `PKR ${Number(sale.unit_price).toLocaleString()}`
                     )}
                   </td>
-                  <td>PKR {Number(sale.total_amount).toLocaleString()}</td>
-                  <td>
+                  <td data-label="Total">PKR {Number(sale.total_amount).toLocaleString()}</td>
+                  <td data-label="Actions">
                     <div className="actions">
                       {editingId === sale.id ? (
                         <>
@@ -232,6 +232,15 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
         }
         tfoot {
           background-color: var(--bg-light);
+        }
+
+        @media (max-width: 600px) {
+          .table thead { display: none; }
+          .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
+          .table tr { margin-bottom: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 0.5rem; }
+          .table td { text-align: right; border-bottom: none; display: flex; justify-content: space-between; }
+          .table td::before { content: attr(data-label); font-weight: bold; text-align: left; }
+          .actions { justify-content: flex-end; }
         }
       `}</style>
     </div>

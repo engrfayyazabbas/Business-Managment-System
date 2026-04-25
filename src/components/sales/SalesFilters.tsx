@@ -83,7 +83,7 @@ export default function SalesFilters({ onFilterChange }: SalesFiltersProps) {
       <style jsx>{`
         .filters-container {
           display: flex;
-          gap: 1.5rem;
+          gap: 1rem;
           padding: 1rem;
           flex-wrap: wrap;
           align-items: flex-end;
@@ -92,12 +92,33 @@ export default function SalesFilters({ onFilterChange }: SalesFiltersProps) {
         .filter-group {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.4rem;
+          flex: 1 1 140px;
+          min-width: 0;
+        }
+        .filter-group label {
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: #666;
         }
         input, select {
-          padding: 0.5rem;
+          padding: 0.5rem 0.6rem;
           border: 1px solid #ddd;
-          border-radius: 4px;
+          border-radius: 6px;
+          width: 100%;
+          box-sizing: border-box;
+          font-size: 0.9rem;
+        }
+        @media (max-width: 640px) {
+          .filters-container {
+            flex-direction: column;
+            gap: 0.75rem;
+          }
+          .filter-group {
+            flex: 1 1 100%;
+          }
         }
       `}</style>
     </div>

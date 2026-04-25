@@ -72,19 +72,24 @@ export default function SalesPage() {
         .sales-page {
           display: flex;
           flex-direction: column;
-          gap: 2rem;
+          gap: 1.5rem;
         }
         .page-header h1 {
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.25rem;
+        }
+        .page-header p {
+          font-size: 0.9rem;
+          color: #666;
         }
         .sales-content {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 2rem;
+          gap: 1.5rem;
         }
         @media (min-width: 1024px) {
           .sales-content {
-            grid-template-columns: 400px 1fr;
+            grid-template-columns: 380px 1fr;
+            gap: 2rem;
           }
         }
         .loading-state {
@@ -93,6 +98,12 @@ export default function SalesPage() {
           background: white;
           border-radius: 8px;
           border: 1px solid #eee;
+          color: #666;
+        }
+        @media (max-width: 640px) {
+          .sales-page {
+            gap: 1rem;
+          }
         }
       `}</style>
     </div>

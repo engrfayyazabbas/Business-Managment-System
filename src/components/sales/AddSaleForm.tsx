@@ -178,8 +178,8 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
         .sale-form {
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
-          max-width: 500px;
+          gap: 1.25rem;
+          width: 100%;
         }
         .form-row {
           display: grid;
@@ -189,13 +189,20 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
         .form-group {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.4rem;
+        }
+        .form-group label {
+          font-size: 0.8rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: #666;
         }
         .total-display {
-          font-size: 1.2rem;
-          padding: 1rem;
+          font-size: 1.1rem;
+          padding: 0.85rem 1rem;
           background: var(--bg-light);
-          border-radius: 4px;
+          border-radius: 6px;
           text-align: right;
         }
         .success-message {
@@ -203,14 +210,21 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
           background-color: #d4edda;
           border: 1px solid #c3e6cb;
           padding: 0.75rem;
-          border-radius: 4px;
+          border-radius: 6px;
+          font-size: 0.9rem;
         }
         .error-message {
           color: #721c24;
           background-color: #f8d7da;
           border: 1px solid #f5c6cb;
           padding: 0.75rem;
-          border-radius: 4px;
+          border-radius: 6px;
+          font-size: 0.9rem;
+        }
+        @media (max-width: 480px) {
+          .form-row {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
     </form>
