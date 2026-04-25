@@ -189,7 +189,7 @@ INSERT INTO inventory_items (name, unit) VALUES
 - [ ] Create **Add Sale** form
   - Select product (Noodles / Momos)
   - Enter quantity sold
-  - Enter unit price (with default from product)
+  - Enter unit price (every time due to variablty of price)
   - Auto-calculate total amount
   - Date picker (defaults to today)
 - [ ] Create **Sales History** page
