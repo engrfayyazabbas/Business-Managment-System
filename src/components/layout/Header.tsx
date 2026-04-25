@@ -1,6 +1,13 @@
+'use client';
+
+import { useAuth } from '@/components/providers/AuthProvider';
 import './layout.css';
 
 export default function Header() {
+  const { user, signOut } = useAuth();
+
+  if (!user) return null;
+
   return (
     <header className="header">
       <div className="header-title">
@@ -10,8 +17,8 @@ export default function Header() {
         <h1>BMS</h1>
       </div>
       <div className="header-user">
-        <span>User Name</span>
-        <button className="logout-btn">Logout</button>
+        <span>{user?.email}</span>
+        <button className="logout-btn" onClick={signOut}>Logout</button>
       </div>
     </header>
   );

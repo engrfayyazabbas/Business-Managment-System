@@ -1,7 +1,14 @@
+'use client';
+
 import Link from 'next/link';
+import { useAuth } from '@/components/providers/AuthProvider';
 import './layout.css';
 
 export default function Sidebar() {
+  const { user } = useAuth();
+
+  if (!user) return null;
+
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
