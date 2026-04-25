@@ -48,6 +48,7 @@ CREATE TABLE products (
   name TEXT NOT NULL UNIQUE,
   sales_unit TEXT NOT NULL,          -- 'pack' for Noodles, 'piece' for Momos
   price_per_unit DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+  cost_per_unit DECIMAL(10, 2) NOT NULL DEFAULT 0.00,  -- COGS (Cost of Goods Sold)
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
@@ -96,6 +97,7 @@ CREATE TABLE inventory_transactions (
   item_id UUID NOT NULL REFERENCES inventory_items(id) ON DELETE RESTRICT,
   type TEXT NOT NULL CHECK (type IN ('purchase', 'consumption')),
   quantity DECIMAL(10, 2) NOT NULL CHECK (quantity > 0),
+  expense_id UUID REFERENCES expenses(id) ON DELETE SET NULL, -- Link to expenses for 'purchase' types
   notes TEXT,
   transaction_date DATE NOT NULL DEFAULT CURRENT_DATE,
   created_by UUID NOT NULL REFERENCES auth.users(id),
@@ -158,9 +160,9 @@ CREATE POLICY "Authenticated users full access" ON products
 
 ```sql
 -- Insert products
-INSERT INTO products (name, sales_unit, price_per_unit) VALUES
-  ('Noodles', 'pack', 0.00),   -- Owner sets actual price
-  ('Momos', 'piece', 0.00);    -- Owner sets actual price
+INSERT INTO products (name, sales_unit, price_per_unit, cost_per_unit) VALUES
+  ('Noodles', 'pack', 0.00, 0.00),   -- Owner sets actual price/cost
+  ('Momos', 'piece', 0.00, 0.00);    -- Owner sets actual price/cost
 
 -- Insert initial inventory items
 INSERT INTO inventory_items (name, unit) VALUES
@@ -168,7 +170,7 @@ INSERT INTO inventory_items (name, unit) VALUES
   ('Packaging', 'packs');
 ```
 
-> **Note:** The owner should update `price_per_unit` to actual selling prices after initial setup.
+> **Note:** The owner should update prices and costs after initial setup.
 
 ### Deliverables
 - ✅ Working login flow (no public registration page)
@@ -261,9 +263,13 @@ INSERT INTO inventory_items (name, unit) VALUES
 - [ ] Create **Record Transaction** form
   - Select item (Flour / Packaging)
   - Transaction type: Purchase (adds stock) or Consumption (reduces stock)
+  - **If Purchase:** Show "Amount (PKR)" field to simultaneously create an Expense record
+  - **If Consumption:** Hide "Amount" field
   - Enter quantity
   - Optional notes
   - Date picker
+- [ ] Implement **Unified Purchase Logic**
+  - When a 'purchase' is saved, create an entry in `expenses` first, then use that `id` for `inventory_transactions.expense_id`
 - [ ] Create **Transaction History** page
   - Table of all inventory transactions
   - Filter by item, type, date
@@ -292,8 +298,8 @@ INSERT INTO inventory_items (name, unit) VALUES
 ### Tasks
 - [ ] **Summary Cards** (top of dashboard)
   - Today's Sales Revenue
-  - Today's Expenses
-  - Today's Profit/Loss
+  - Today's Gross Profit (Revenue - COGS)
+  - Today's Net Profit (Revenue - All Expenses)
   - Current Inventory Status (Flour kg, Packaging pcs)
 - [ ] **Sales Trend Chart** (Line chart)
   - Daily/weekly/monthly sales over time
@@ -302,19 +308,20 @@ INSERT INTO inventory_items (name, unit) VALUES
   - Expenses by category for selected period
 - [ ] **Profit & Loss Chart** (Bar chart)
   - Revenue vs Expenses side by side
+  - Include Gross Profit margin line
   - Daily/weekly/monthly toggle
 - [ ] **Recent Activity Feed**
   - Last 10 actions (sales, expenses, inventory changes)
 - [ ] **Date Range Selector**
   - Today / This Week / This Month / Custom Range
 - [ ] Build aggregation API routes
-  - `GET /api/dashboard/summary` — key metrics
+  - `GET /api/dashboard/summary` — key metrics (includes Gross/Net profit)
   - `GET /api/dashboard/sales-trend` — time-series data
   - `GET /api/dashboard/expense-breakdown` — category totals
   - `GET /api/dashboard/profit-loss` — revenue vs expenses
 
 ### Deliverables
-- ✅ At-a-glance understanding of business health
+- ✅ At-a-glance understanding of business health and product margins
 - ✅ Interactive charts with time range filtering
 - ✅ Dashboard loads in under 2 seconds
 
@@ -334,6 +341,7 @@ INSERT INTO inventory_items (name, unit) VALUES
 - [ ] **Data Integrity** — prevent negative stock, negative amounts
 - [ ] **Cross-browser Testing** — Chrome, Firefox, Edge, Safari
 - [ ] **Performance Audit** — Lighthouse score check
+- [ ] **CSV/Excel Export** — Implement 'Download as CSV' for Sales and Expenses history
 - [ ] **Security Review**
   - Supabase RLS policies on all tables
   - Input sanitization
@@ -347,7 +355,7 @@ INSERT INTO inventory_items (name, unit) VALUES
   - Create a simple user guide
 
 ### Deliverables
-- ✅ Fully functional, bug-free production app
+- ✅ Fully functional, bug-free production app with data export capabilities
 - ✅ Accessible at a public URL
 - ✅ All team members have accounts and can use the app
 
@@ -359,7 +367,6 @@ These are **not in scope** for v1.0 but may be added later based on business nee
 
 | Feature | Priority | Notes |
 |---------|----------|-------|
-| Export data to Excel/CSV | Medium | Monthly reports for accountant |
 | Product variants (flavors) | Low | If menu expands |
 | Low-stock alerts | Medium | Email/notification when stock is low |
 | Multi-branch support | Low | If business expands |
