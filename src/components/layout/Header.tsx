@@ -4,6 +4,9 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-title">
+        <label htmlFor="mobile-sidebar-toggle" className="menu-toggle-btn">
+          ☰
+        </label>
         <h1>BMS</h1>
       </div>
       <div className="header-user">

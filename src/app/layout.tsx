@@ -16,6 +16,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <input type="checkbox" id="mobile-sidebar-toggle" className="mobile-sidebar-toggle" />
+        <label htmlFor="mobile-sidebar-toggle" className="sidebar-overlay"></label>
         <Sidebar />
         <Header />
         <main className="main-content">
