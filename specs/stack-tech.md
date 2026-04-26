@@ -21,28 +21,28 @@
 ┌─────────────────────────────────────────────────┐
 │                   FRONTEND                       │
 │            Next.js 14 (React Pages)              │
-│  ┌──────────┬──────────┬───────────┬──────────┐  │
-│  │Dashboard │  Sales   │ Expenses  │Inventory │  │
-│  │  Page    │  Page    │   Page    │  Page    │  │
-│  └──────────┴──────────┴───────────┴──────────┘  │
+│  ┌──────────┬──────────┬───────────┬──────────┬──────────┐  │
+│  │Dashboard │  Sales   │ Clients   │ Expenses │Inventory │  │
+│  │  Page    │  Page    │   Page    │   Page   │  Page    │  │
+│  └──────────┴──────────┴───────────┴──────────┴──────────┘  │
 │              │  Chart.js for Visuals  │           │
 └──────────────┼───────────────────────┼───────────┘
                │    API Calls          │
 ┌──────────────┼───────────────────────┼───────────┐
 │              ▼    BACKEND            ▼           │
 │         Next.js API Routes (/api/*)              │
-│  ┌──────────┬──────────┬───────────┬──────────┐  │
-│  │/api/auth │/api/sales│/api/expense│/api/inv  │  │
-│  └──────────┴──────────┴───────────┴──────────┘  │
+│  ┌──────────┬──────────┬───────────┬──────────┬──────────┐  │
+│  │/api/auth │/api/sales│/api/client│/api/exp  │/api/inv  │  │
+│  └──────────┴──────────┴───────────┴──────────┴──────────┘  │
 └──────────────┼───────────────────────────────────┘
                │    Supabase Client
 ┌──────────────┼───────────────────────────────────┐
 │              ▼    DATABASE                       │
 │         Supabase (PostgreSQL)                    │
-│  ┌──────────┬──────────┬───────────┬──────────┐  │
-│  │  users   │  sales   │ expenses  │inventory │  │
-│  │          │          │ categories│          │  │
-│  └──────────┴──────────┴───────────┴──────────┘  │
+│  ┌──────────┬──────────┬───────────┬──────────┬──────────┐  │
+│  │  users   │  sales   │  clients  │ expenses │inventory │  │
+│  │          │          │  payments │ categories│          │  │
+│  └──────────┴──────────┴───────────┴──────────┴──────────┘  │
 └──────────────────────────────────────────────────┘
 ```
 
@@ -62,6 +62,7 @@
 - **No Tailwind, no component libraries.** Keeps the bundle tiny, gives full design control, and avoids version lock-in.
 - **CSS Variables** for a consistent design system (colors, spacing, typography).
 - **Responsive design** with CSS Grid and Flexbox for mobile/tablet/desktop.
+- **Mobile-First Approach:** All modules must be designed to be fully functional and visually appealing on mobile devices first, then scaled for larger screens. This is a core requirement for ensuring usability for staff on-site.
 
 ### Charts — Chart.js
 

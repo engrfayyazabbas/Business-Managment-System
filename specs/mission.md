@@ -40,10 +40,11 @@ GoldenPhoenix Noodles is a small food business selling **two products: Noodles a
 
 ### What the App Will Do
 
-1. **Track Daily Sales** — Record noodle and momo sales each day with quantities and revenue
-2. **Manage Expenses** — Categorize and log all business expenses (rent, salaries, utilities, transport, etc.) with full CRUD on categories
-3. **Monitor Inventory** — Track raw material stock levels (Flour, Packaging) with purchase and consumption records
-4. **Visualize Performance** — A full dashboard with charts for profit/loss, sales trends, and expense breakdowns
+1. **Track Daily Sales** — Record noodle and momo sales each day with quantities and revenue, linked to specific clients.
+2. **Manage Clients & Dues** — Maintain a client database with phone numbers, track outstanding balances (dues), and record payment history.
+3. **Manage Expenses** — Categorize and log all business expenses (rent, salaries, utilities, transport, etc.) with full CRUD on categories.
+4. **Monitor Inventory** — Track raw material stock levels (Flour, Packaging) with purchase and consumption records.
+5. **Visualize Performance** — A full dashboard with charts for profit/loss, sales trends, and expense breakdowns.
 
 ### What the App Will NOT Do (Out of Scope)
 
