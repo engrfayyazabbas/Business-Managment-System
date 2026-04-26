@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface Sale {
   id: string;
   product_id: string;
+  client_id: string | null;
   quantity: number;
   unit_price: number;
   total_amount: number;
@@ -13,6 +15,9 @@ interface Sale {
     name: string;
     sales_unit: string;
   };
+  clients: {
+    name: string;
+  } | null;
 }
 
 interface SalesTableProps {
@@ -89,6 +94,7 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
           <thead>
             <tr>
               <th>Date</th>
+              <th>Client</th>
               <th>Product</th>
               <th>Quantity</th>
               <th>Unit Price</th>
@@ -99,7 +105,7 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
           <tbody>
             {sales.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{ textAlign: 'center' }}>No sales records found.</td>
+                <td colSpan={7} style={{ textAlign: 'center' }}>No sales records found.</td>
               </tr>
             ) : (
               sales.map((sale) => (
@@ -116,7 +122,16 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
                       new Date(sale.sale_date).toLocaleDateString()
                     )}
                   </td>
-                  <td data-label="Product">{sale.products.name}</td>
+                  <td data-label="Client">
+                    {sale.clients ? (
+                      <Link href={`/clients/${sale.client_id}`} className="client-link">
+                        {sale.clients.name}
+                      </Link>
+                    ) : (
+                      <span className="cash-sale">Cash Sale</span>
+                    )}
+                  </td>
+                  <td data-label="Product">{sale.products?.name}</td>
                   <td data-label="Quantity">
                     {editingId === sale.id ? (
                       <input
@@ -127,7 +142,7 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
                         min="1"
                       />
                     ) : (
-                      `${sale.quantity} ${sale.products.sales_unit}${sale.quantity > 1 ? 's' : ''}`
+                      `${sale.quantity} ${sale.products?.sales_unit}${sale.quantity > 1 ? 's' : ''}`
                     )}
                   </td>
                   <td data-label="Unit Price">
@@ -179,7 +194,7 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
           {sales.length > 0 && (
             <tfoot>
               <tr>
-                <td colSpan={4} style={{ textAlign: 'right' }}><strong>Grand Total:</strong></td>
+                <td colSpan={5} style={{ textAlign: 'right' }}><strong>Grand Total:</strong></td>
                 <td colSpan={2}><strong>PKR {totalRevenue.toLocaleString()}</strong></td>
               </tr>
             </tfoot>
@@ -207,6 +222,19 @@ export default function SalesTable({ sales, onSaleDeleted, onSaleUpdated }: Sale
         .table th {
           background-color: var(--bg-light);
           font-weight: 600;
+        }
+        .client-link {
+          color: var(--primary-color);
+          text-decoration: none;
+          font-weight: 500;
+        }
+        .client-link:hover {
+          text-decoration: underline;
+        }
+        .cash-sale {
+          color: #888;
+          font-style: italic;
+          font-size: 0.9em;
         }
         .actions {
           display: flex;

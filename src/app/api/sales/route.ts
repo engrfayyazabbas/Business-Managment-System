@@ -16,6 +16,9 @@ export async function GET(request: Request) {
       products (
         name,
         sales_unit
+      ),
+      clients (
+        name
       )
     `)
     .order('sale_date', { ascending: false })
@@ -49,7 +52,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { product_id, quantity, unit_price, sale_date } = body;
+  const { product_id, quantity, unit_price, sale_date, client_id } = body;
 
   if (!product_id || !quantity || !unit_price) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -62,6 +65,7 @@ export async function POST(request: Request) {
         product_id,
         quantity,
         unit_price,
+        client_id: client_id || null,
         sale_date: sale_date || new Date().toISOString().split('T')[0],
         created_by: user.id,
       },

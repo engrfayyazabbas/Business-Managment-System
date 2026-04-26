@@ -30,6 +30,9 @@ export default function Sidebar() {
           <li>
             <Link href="/inventory">Inventory</Link>
           </li>
+          <li>
+            <Link href="/clients">Clients</Link>
+          </li>
         </ul>
       </nav>
     </aside>

@@ -8,18 +8,26 @@ interface Product {
   sales_unit: string;
 }
 
+interface Client {
+  id: string;
+  name: string;
+  phone: string | null;
+}
+
 interface AddSaleFormProps {
   onSaleAdded: () => void;
 }
 
 export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
     product_id: '',
+    client_id: '', // Optional
     quantity: '',
     unit_price: '',
     sale_date: new Date().toISOString().split('T')[0],
@@ -28,21 +36,27 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    async function fetchProducts() {
+    async function fetchData() {
       try {
-        const response = await fetch('/api/products');
-        if (response.ok) {
-          const data = await response.json();
+        const [productsRes, clientsRes] = await Promise.all([
+          fetch('/api/products'),
+          fetch('/api/clients')
+        ]);
+        
+        if (productsRes.ok) {
+          const data = await productsRes.json();
           setProducts(data);
-        } else {
-          const errorData = await response.json();
-          setError(errorData.error || 'Failed to fetch products');
+        }
+        
+        if (clientsRes.ok) {
+          const data = await clientsRes.json();
+          setClients(data);
         }
       } catch {
-        setError('Network error: Could not fetch products');
+        setError('Network error: Could not fetch form data');
       }
     }
-    fetchProducts();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -62,14 +76,17 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
     setSuccess(false);
 
     try {
+      const payload = {
+        ...formData,
+        quantity: Number(formData.quantity),
+        unit_price: Number(formData.unit_price),
+        client_id: formData.client_id === '' ? null : formData.client_id,
+      };
+
       const response = await fetch('/api/sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          quantity: Number(formData.quantity),
-          unit_price: Number(formData.unit_price),
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -80,6 +97,7 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
       setSuccess(true);
       setFormData({
         product_id: '',
+        client_id: '',
         quantity: '',
         unit_price: '',
         sale_date: new Date().toISOString().split('T')[0],
@@ -117,6 +135,23 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
           {products.map((product) => (
             <option key={product.id} value={product.id}>
               {product.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="client_id">Client (Optional for Cash Sale)</label>
+        <select
+          id="client_id"
+          name="client_id"
+          value={formData.client_id}
+          onChange={handleChange}
+        >
+          <option value="">-- Cash Sale (No Client) --</option>
+          {clients.map((client) => (
+            <option key={client.id} value={client.id}>
+              {client.name} {client.phone ? `(${client.phone})` : ''}
             </option>
           ))}
         </select>
