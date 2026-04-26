@@ -35,8 +35,8 @@ export default function AddClientForm({ onClientAdded, onCancel }: AddClientForm
       }
 
       onClientAdded();
-    } catch (err: any) {
-      setError(err.message || 'Failed to add client');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to add client');
     } finally {
       setLoading(false);
     }

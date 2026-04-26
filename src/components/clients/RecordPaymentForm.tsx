@@ -44,8 +44,8 @@ export default function RecordPaymentForm({ clientId, clientName, onPaymentRecor
       }
 
       onPaymentRecorded();
-    } catch (err: any) {
-      setError(err.message || 'Failed to record payment');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to record payment');
     } finally {
       setLoading(false);
     }

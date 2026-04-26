@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import RecordPaymentForm from './RecordPaymentForm';
 
@@ -42,7 +42,7 @@ export default function ClientProfile({ clientId }: { clientId: string }) {
   const [error, setError] = useState('');
   const [showPaymentForm, setShowPaymentForm] = useState(false);
 
-  const fetchClientData = async () => {
+  const fetchClientData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`/api/clients/${clientId}`);
@@ -51,16 +51,16 @@ export default function ClientProfile({ clientId }: { clientId: string }) {
       }
       const result = await response.json();
       setData(result);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch client details');
     } finally {
       setLoading(false);
     }
-  };
+  }, [clientId]);
 
   useEffect(() => {
     fetchClientData();
-  }, [clientId]);
+  }, [fetchClientData]);
 
   if (loading) return <p>Loading client details...</p>;
   if (error) return <div className="error-message">{error}</div>;
