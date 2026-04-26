@@ -1,6 +1,6 @@
 import ClientProfile from '@/components/clients/ClientProfile';
 
-export function generateMetadata({ params: _params }: { params: { id: string } }) {
+export function generateMetadata() {
   return {
     title: 'Client Profile - GoldenPhoenix',
   };
