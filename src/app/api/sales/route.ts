@@ -58,7 +58,39 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
-  const { data, error } = await supabase
+  // 1. Check if product is linked to inventory
+  const { data: product, error: productError } = await supabase
+    .from('products')
+    .select('inventory_item_id')
+    .eq('id', product_id)
+    .single();
+
+  if (productError || !product) {
+    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+  }
+
+  // 2. If linked, validate stock
+  if (product.inventory_item_id) {
+    const { data: stockData, error: stockError } = await supabase
+      .from('inventory_stock')
+      .select('current_stock')
+      .eq('id', product.inventory_item_id)
+      .single();
+
+    if (stockError) {
+      return NextResponse.json({ error: 'Could not verify stock' }, { status: 500 });
+    }
+
+    if (!stockData || stockData.current_stock < quantity) {
+      return NextResponse.json(
+        { error: `Insufficient Stock. Available: ${stockData?.current_stock || 0}` },
+        { status: 400 }
+      );
+    }
+  }
+
+  // 3. Record the sale
+  const { data: saleData, error: saleError } = await supabase
     .from('sales')
     .insert([
       {
@@ -70,11 +102,34 @@ export async function POST(request: Request) {
         created_by: user.id,
       },
     ])
-    .select();
+    .select()
+    .single();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (saleError) {
+    return NextResponse.json({ error: saleError.message }, { status: 500 });
   }
 
-  return NextResponse.json(data[0], { status: 201 });
+  // 4. Record inventory consumption if linked
+  if (product.inventory_item_id) {
+    const { error: invError } = await supabase
+      .from('inventory_transactions')
+      .insert([
+        {
+          item_id: product.inventory_item_id,
+          type: 'consumption',
+          quantity: quantity,
+          transaction_date: sale_date || new Date().toISOString().split('T')[0],
+          notes: `Auto-consumption from Sale ID: ${saleData.id}`,
+          created_by: user.id,
+        },
+      ]);
+
+    if (invError) {
+      console.error('Failed to record inventory consumption:', invError);
+      // We don't fail the sale if inventory recording fails, but we should log it
+      // In a real production app, this should be a transaction.
+    }
+  }
+
+  return NextResponse.json(saleData, { status: 201 });
 }

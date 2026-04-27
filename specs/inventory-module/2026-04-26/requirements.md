@@ -7,11 +7,12 @@ The Inventory Module tracks the lifecycle of materials in GoldenPhoenix Noodles.
 - **Stock Tracking:** Real-time visibility into current stock levels for both raw materials and finished products.
 - **Production Recording:** Ability to record "Made packs" for finished goods (Noodles/Momos).
 - **Automated Consumption:** Stock of finished goods is automatically deducted when a sale is recorded.
-- **Manual Adjustments:** Record purchases (Stock In) and consumption (Stock Out) for raw materials.
-- **Unified Logic:** Purchases can be linked to Expenses to keep financial records in sync.
+- **Manual Adjustments:** Record purchases (Stock In) and consumption (Stock Out) for raw materials based on quantity.
 
 ## Business Rules
 - **Finished Goods Sync:** When "Noodles" are sold, the inventory for "Noodles Pack" must decrease.
+- **Stock Validation (Sales):** Sales cannot be recorded if the requested quantity exceeds the available stock.
+- **Stock Validation (Manual):** Manual "Consumption" transactions for raw materials cannot be recorded if the quantity exceeds the current stock level.
 - **Production Entry:** Users can manually enter the quantity of packs produced each day.
 - **Units:** Support for various units like 'kg', 'packs', 'pieces'.
 
