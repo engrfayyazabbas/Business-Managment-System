@@ -99,11 +99,10 @@ export default function AddRawMaterialForm({ onTransactionAdded }: AddRawMateria
           <h3>Record Raw Material</h3>
           <button 
             type="button" 
-            className="btn-settings" 
+            className="btn-manage" 
             onClick={() => setShowManageModal(true)}
-            title="Manage Items"
           >
-            ⚙️
+            Manage Items
           </button>
         </div>
 
@@ -196,17 +195,20 @@ export default function AddRawMaterialForm({ onTransactionAdded }: AddRawMateria
             justify-content: space-between;
             align-items: center;
           }
-          .btn-settings {
-            background: none;
+          .btn-manage {
+            background-color: #ffcc00;
+            color: #000;
             border: none;
-            font-size: 1.2rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
             cursor: pointer;
-            padding: 0.25rem;
-            border-radius: 4px;
             transition: background 0.2s;
           }
-          .btn-settings:hover {
-            background: #f0f0f0;
+          .btn-manage:hover {
+            background-color: #e6b800;
           }
           .form-group {
             display: flex;
@@ -253,4 +255,4 @@ export default function AddRawMaterialForm({ onTransactionAdded }: AddRawMateria
       )}
     </>
   );
-  }
+}
