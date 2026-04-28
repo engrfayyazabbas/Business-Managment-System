@@ -41,6 +41,35 @@
   color: var(--primary);
 }
 
+.nav-group {
+  margin-top: var(--space-xs);
+}
+
+.nav-group-title {
+  display: block;
+  padding: var(--space-xs) var(--space-md);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #666;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+.sub-nav {
+  margin-left: var(--space-sm);
+  border-left: 1px solid #333;
+}
+
+.sub-nav li {
+  margin-bottom: 2px;
+}
+
+.sub-nav a {
+  padding: var(--space-xs) var(--space-md);
+  font-size: 0.9rem;
+}
+
 .header {
   height: var(--header-height);
   background-color: var(--card-bg);

@@ -27,8 +27,16 @@ export default function Sidebar() {
           <li>
             <Link href="/expenses">Expenses</Link>
           </li>
-          <li>
-            <Link href="/inventory">Inventory</Link>
+          <li className="nav-group">
+            <span className="nav-group-title">Inventory</span>
+            <ul className="sub-nav">
+              <li>
+                <Link href="/inventory/production">Production</Link>
+              </li>
+              <li>
+                <Link href="/inventory/raw-materials">Raw Materials</Link>
+              </li>
+            </ul>
           </li>
           <li>
             <Link href="/clients">Clients</Link>

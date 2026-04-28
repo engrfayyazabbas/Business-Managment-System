@@ -6,6 +6,7 @@ interface Product {
   id: string;
   name: string;
   sales_unit: string;
+  inventory_item_id?: string;
 }
 
 interface Client {
@@ -24,6 +25,7 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [availableStock, setAvailableStock] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
     product_id: '',
@@ -62,6 +64,18 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
   useEffect(() => {
     const product = products.find((p) => p.id === formData.product_id);
     setSelectedProduct(product || null);
+
+    const fetchStock = async () => {
+      if (product?.inventory_item_id) {
+        const res = await fetch(`/api/inventory`);
+        const data = await res.json();
+        const productStock = data.find((item: { id: string; current_stock: number }) => item.id === product.inventory_item_id);
+        setAvailableStock(productStock?.current_stock ?? 0);
+      } else {
+        setAvailableStock(null);
+      }
+    };
+    fetchStock();
   }, [formData.product_id, products]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -74,6 +88,12 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
     setLoading(true);
     setError('');
     setSuccess(false);
+
+    if (availableStock !== null && Number(formData.quantity) > availableStock) {
+      setError('Quantity exceeds available stock.');
+      setLoading(false);
+      return;
+    }
 
     try {
       const payload = {
@@ -103,6 +123,7 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
         sale_date: new Date().toISOString().split('T')[0],
       });
       onSaleAdded();
+      setAvailableStock(null);
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
@@ -114,6 +135,7 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
   };
 
   const totalAmount = Number(formData.quantity) * Number(formData.unit_price);
+  const isStockExceeded = availableStock !== null && Number(formData.quantity) > availableStock;
 
   return (
     <form onSubmit={handleSubmit} className="card sale-form">
@@ -171,6 +193,11 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
             min="1"
             required
           />
+          {availableStock !== null && (
+            <span className={`stock-indicator ${isStockExceeded ? 'error' : ''}`}>
+              Available: {availableStock}
+            </span>
+          )}
         </div>
 
         <div className="form-group">
@@ -187,6 +214,10 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
           />
         </div>
       </div>
+
+      {isStockExceeded && (
+        <p className="error-message">Quantity exceeds available stock.</p>
+      )}
 
       <div className="form-group">
         <label htmlFor="sale_date">Sale Date</label>
@@ -205,7 +236,7 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
         <span>PKR {totalAmount.toLocaleString()}</span>
       </div>
 
-      <button type="submit" className="btn btn-primary" disabled={loading}>
+      <button type="submit" className="btn btn-primary" disabled={loading || isStockExceeded}>
         {loading ? 'Saving...' : 'Record Sale'}
       </button>
 
@@ -232,6 +263,14 @@ export default function AddSaleForm({ onSaleAdded }: AddSaleFormProps) {
           text-transform: uppercase;
           letter-spacing: 0.04em;
           color: #666;
+        }
+        .stock-indicator {
+          font-size: 0.8rem;
+          color: #666;
+        }
+        .stock-indicator.error {
+          color: #721c24;
+          font-weight: bold;
         }
         .total-display {
           font-size: 1.1rem;
