@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import AddClientForm from './AddClientForm';
 import RecordPaymentForm from './RecordPaymentForm';
+import ManageClientsModal from './ManageClientsModal';
 
 interface ClientSummary {
   id: string;
@@ -20,7 +20,7 @@ export default function ClientList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showManageModal, setShowManageModal] = useState(false);
   const [paymentClient, setPaymentClient] = useState<{id: string, name: string} | null>(null);
 
   const fetchClients = async () => {
@@ -43,8 +43,7 @@ export default function ClientList() {
     fetchClients();
   }, []);
 
-  const handleClientAdded = () => {
-    setShowAddForm(false);
+  const handleClientsChanged = () => {
     fetchClients();
   };
 
@@ -57,8 +56,11 @@ export default function ClientList() {
     <div className="client-list-container">
       <div className="header-actions">
         <h2>Clients & Dues</h2>
-        <button className="btn btn-primary" onClick={() => setShowAddForm(true)}>
-          Add Client
+        <button 
+          className="btn-manage" 
+          onClick={() => setShowManageModal(true)}
+        >
+          Manage Clients
         </button>
       </div>
 
@@ -112,10 +114,10 @@ export default function ClientList() {
         </div>
       )}
 
-      {showAddForm && (
-        <AddClientForm 
-          onClientAdded={handleClientAdded} 
-          onCancel={() => setShowAddForm(false)} 
+      {showManageModal && (
+        <ManageClientsModal 
+          onClose={() => setShowManageModal(false)} 
+          onClientsChanged={handleClientsChanged} 
         />
       )}
 
@@ -138,6 +140,24 @@ export default function ClientList() {
           display: flex;
           justify-content: space-between;
           align-items: center;
+        }
+        .btn-manage {
+          background-color: #ffcc00;
+          color: #000;
+          border: none;
+          padding: 0.6rem 1.2rem;
+          border-radius: 6px;
+          font-size: 0.85rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: background 0.2s, transform 0.1s;
+        }
+        .btn-manage:hover {
+          background-color: #e6b800;
+        }
+        .btn-manage:active {
+          transform: scale(0.98);
         }
         .clients-grid {
           display: grid;

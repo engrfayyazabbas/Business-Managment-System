@@ -13,6 +13,7 @@ export async function GET() {
   const { data, error } = await supabase
     .from('client_summary')
     .select('*')
+    .eq('is_archived', false)
     .order('name');
 
   if (error) {
