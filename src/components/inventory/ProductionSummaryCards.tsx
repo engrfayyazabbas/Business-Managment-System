@@ -9,6 +9,13 @@ interface Transaction {
   };
 }
 
+interface Summary {
+  [name: string]: {
+    quantity: number;
+    unit: string;
+  };
+}
+
 interface ProductionSummaryCardsProps {
   transactions: Transaction[];
 }
@@ -18,7 +25,7 @@ export default function ProductionSummaryCards({ transactions }: ProductionSumma
   
   const todayProduction = transactions.filter(t => t.transaction_date === today);
   
-  const summary = todayProduction.reduce((acc: any, t) => {
+  const summary = todayProduction.reduce((acc: Summary, t) => {
     const name = t.inventory_items.name;
     if (!acc[name]) {
       acc[name] = { quantity: 0, unit: t.inventory_items.unit };
@@ -32,12 +39,12 @@ export default function ProductionSummaryCards({ transactions }: ProductionSumma
   return (
     <div className="summary-cards">
       <div className="card summary-card production">
-        <h4>Today's Production</h4>
+        <h4>Today&apos;s Production</h4>
         <div className="summary-grid">
           {items.length === 0 ? (
             <p className="no-data">No production recorded today.</p>
           ) : (
-            items.map(([name, data]: [string, any]) => (
+            items.map(([name, data]: [string, { quantity: number; unit: string }]) => (
               <div key={name} className="summary-item">
                 <span className="item-name">{name}</span>
                 <span className="item-value">{data.quantity} {data.unit}{data.quantity > 1 ? 's' : ''}</span>

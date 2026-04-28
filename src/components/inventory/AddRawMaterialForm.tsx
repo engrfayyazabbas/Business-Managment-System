@@ -7,6 +7,7 @@ interface InventoryItem {
   id: string;
   name: string;
   unit: string;
+  current_stock: number;
 }
 
 interface AddRawMaterialFormProps {
@@ -26,7 +27,7 @@ export default function AddRawMaterialForm({ onTransactionAdded }: AddRawMateria
       if (res.ok) {
         const data = await res.json();
         // Filter out finished goods for the raw materials page
-        const rawMaterials = data.filter((item: any) => 
+        const rawMaterials = data.filter((item: InventoryItem) => 
           !['Noodles Pack', 'Momos'].includes(item.name)
         );
         setItems(rawMaterials);
@@ -85,8 +86,8 @@ export default function AddRawMaterialForm({ onTransactionAdded }: AddRawMateria
       onTransactionAdded();
 
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }

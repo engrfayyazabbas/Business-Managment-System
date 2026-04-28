@@ -32,6 +32,7 @@ export default function ManageClientsModal({ onClose, onClientsChanged }: Manage
         .select('*')
         .order('name');
       
+      if (error) throw new Error(error.message);
       if (data) setClients(data);
     } catch {
       setError('Failed to fetch clients');

@@ -15,6 +15,14 @@ interface Transaction {
   };
 }
 
+interface EditForm {
+  quantity?: number;
+  transaction_date?: string;
+  notes?: string;
+  type?: string;
+  item_id?: string;
+}
+
 interface ProductionTableProps {
   transactions: Transaction[];
   onProductionDeleted: () => void;
@@ -23,7 +31,7 @@ interface ProductionTableProps {
 
 export default function ProductionTable({ transactions, onProductionDeleted, onProductionUpdated }: ProductionTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<any>({});
+  const [editForm, setEditForm] = useState<EditForm>({});
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async (id: string) => {
@@ -55,7 +63,7 @@ export default function ProductionTable({ transactions, onProductionDeleted, onP
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditForm((prev: any) => ({ ...prev, [name]: value }));
+    setEditForm((prev: EditForm) => ({ ...prev, [name]: value }));
   };
 
   const handleUpdate = async (id: string) => {

@@ -10,6 +10,13 @@ interface Transaction {
   };
 }
 
+interface Summary {
+  [name: string]: {
+    quantity: number;
+    unit: string;
+  };
+}
+
 interface RawMaterialSummaryCardsProps {
   transactions: Transaction[];
 }
@@ -19,14 +26,14 @@ export default function RawMaterialSummaryCards({ transactions }: RawMaterialSum
   
   const todayTransactions = transactions.filter(t => t.transaction_date === today);
   
-  const purchases = todayTransactions.filter(t => t.type === 'purchase').reduce((acc: any, t) => {
+  const purchases = todayTransactions.filter(t => t.type === 'purchase').reduce((acc: Summary, t) => {
     const name = t.inventory_items.name;
     if (!acc[name]) acc[name] = { quantity: 0, unit: t.inventory_items.unit };
     acc[name].quantity += Number(t.quantity);
     return acc;
   }, {});
 
-  const consumption = todayTransactions.filter(t => t.type === 'consumption').reduce((acc: any, t) => {
+  const consumption = todayTransactions.filter(t => t.type === 'consumption').reduce((acc: Summary, t) => {
     const name = t.inventory_items.name;
     if (!acc[name]) acc[name] = { quantity: 0, unit: t.inventory_items.unit };
     acc[name].quantity += Number(t.quantity);
@@ -37,12 +44,12 @@ export default function RawMaterialSummaryCards({ transactions }: RawMaterialSum
     <div className="summary-cards">
       <div className="grid">
         <div className="card summary-card purchase">
-          <h4>Today's Purchases</h4>
+          <h4>Today&apos;s Purchases</h4>
           <div className="summary-list">
             {Object.entries(purchases).length === 0 ? (
               <p className="no-data">No purchases today.</p>
             ) : (
-              Object.entries(purchases).map(([name, data]: [string, any]) => (
+              Object.entries(purchases).map(([name, data]: [string, { quantity: number; unit: string }]) => (
                 <div key={name} className="summary-item">
                   <span className="item-name">{name}</span>
                   <span className="item-value">{data.quantity} {data.unit}</span>
@@ -53,12 +60,12 @@ export default function RawMaterialSummaryCards({ transactions }: RawMaterialSum
         </div>
 
         <div className="card summary-card consumption">
-          <h4>Today's Consumption</h4>
+          <h4>Today&apos;s Consumption</h4>
           <div className="summary-list">
             {Object.entries(consumption).length === 0 ? (
               <p className="no-data">No consumption today.</p>
             ) : (
-              Object.entries(consumption).map(([name, data]: [string, any]) => (
+              Object.entries(consumption).map(([name, data]: [string, { quantity: number; unit: string }]) => (
                 <div key={name} className="summary-item">
                   <span className="item-name">{name}</span>
                   <span className="item-value">{data.quantity} {data.unit}</span>

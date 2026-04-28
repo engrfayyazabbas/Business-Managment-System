@@ -6,6 +6,7 @@ interface InventoryItem {
   id: string;
   name: string;
   unit: string;
+  current_stock: number;
 }
 
 interface AddProductionFormProps {
@@ -33,7 +34,7 @@ export default function AddProductionForm({ onProductionAdded }: AddProductionFo
         if (res.ok) {
           const data = await res.json();
           // Filter for finished goods (Noodles/Momos)
-          const finishedGoods = data.filter((item: any) => 
+          const finishedGoods = data.filter((item: InventoryItem) => 
             ['Noodles Pack', 'Momos'].includes(item.name)
           );
           setItems(finishedGoods);
@@ -82,8 +83,8 @@ export default function AddProductionForm({ onProductionAdded }: AddProductionFo
       onProductionAdded();
 
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
