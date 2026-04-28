@@ -1,5 +1,5 @@
 # Implementation Plan — Inventory Module
-
+# Note:Check if the folllowing code is generated,if not then develop code for it.
 ## 1. Database Updates
 - [x] Create a migration (`20260426_inventory_module.sql`):
     - [x] Add `inventory_item_id` to `products` table.
