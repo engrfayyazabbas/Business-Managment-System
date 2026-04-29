@@ -109,27 +109,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: saleError.message }, { status: 500 });
   }
 
-  // 4. Record inventory consumption if linked
-  if (product.inventory_item_id) {
-    const { error: invError } = await supabase
-      .from('inventory_transactions')
-      .insert([
-        {
-          item_id: product.inventory_item_id,
-          type: 'consumption',
-          quantity: quantity,
-          transaction_date: sale_date || new Date().toISOString().split('T')[0],
-          notes: `Auto-consumption from Sale ID: ${saleData.id}`,
-          created_by: user.id,
-        },
-      ]);
-
-    if (invError) {
-      console.error('Failed to record inventory consumption:', invError);
-      // We don't fail the sale if inventory recording fails, but we should log it
-      // In a real production app, this should be a transaction.
-    }
-  }
-
   return NextResponse.json(saleData, { status: 201 });
 }
