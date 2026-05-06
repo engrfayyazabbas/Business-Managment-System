@@ -1,17 +1,25 @@
 # 🐉 GoldenPhoenix Noodles — Business Management System
 
-A lightweight, web-based management system built for **GoldenPhoenix Noodles** — a small food business selling Noodles and Momos. Track daily sales, manage expenses, monitor inventory, and visualize business performance from a single dashboard.
+A lightweight, web-based management system built for **GoldenPhoenix Noodles** — a small food business specializing in Noodles and Momos. Track daily sales, manage client dues, monitor inventory, and visualize business performance from a single dashboard.
+
+---
+
+## 🚀 Current Status: Active Development
+
+The core infrastructure and primary modules (Sales, Clients, Inventory) are now functional. We are currently working on Expense tracking and Dashboard analytics.
 
 ---
 
 ## 🎯 What It Does
 
-| Module | Description |
-|--------|-------------|
-| **Sales Tracking** | Record daily noodle and momo sales with quantity, price, and auto-calculated totals |
-| **Expense Management** | Log expenses under fully customizable categories (create/delete your own) |
-| **Inventory Monitoring** | Track raw material stock (Flour, Packaging) with purchase & consumption logs |
-| **Dashboard & Analytics** | Interactive charts for sales trends, expense breakdowns, and profit/loss analysis |
+| Module | Status | Description |
+|--------|--------|-------------|
+| **Authentication** | ✅ Done | Secure login for authorized staff via Supabase Auth. |
+| **Sales Tracking** | ✅ Done | Record daily noodle and momo sales with quantity, price, and client association. |
+| **Client Management** | ✅ Done | Manage client database, track outstanding dues, and record payments. |
+| **Inventory Monitoring** | ✅ Done | Track raw materials (Flour, Packaging) and Finished Goods production/consumption. |
+| **Expense Management** | 🏗️ WIP | Log expenses under customizable categories (UI in progress). |
+| **Dashboard & Analytics** | 🔲 Pending | Interactive charts for sales trends, expense breakdowns, and profit/loss analysis. |
 
 ---
 
@@ -21,21 +29,10 @@ A lightweight, web-based management system built for **GoldenPhoenix Noodles** �
 |-------|-----------|
 | Frontend | Next.js 14 (React) |
 | Styling | Vanilla CSS + CSS Variables |
-| Charts | Chart.js + react-chartjs-2 |
-| Backend | Next.js API Routes |
+| Backend | Next.js API Routes (Server Components & Server Actions) |
 | Database | Supabase (PostgreSQL) |
 | Auth | Supabase Auth |
-| Deployment | Vercel (Free Tier) |
-
-**Monthly Cost: $0**
-
----
-
-## 👥 Users
-
-- **2–4 users** with equal access
-- Email + password authentication
-- No admin/staff role distinction — everyone can do everything
+| Deployment | Vercel |
 
 ---
 
@@ -43,71 +40,76 @@ A lightweight, web-based management system built for **GoldenPhoenix Noodles** �
 
 ```
 Business Managment System/
-├── specs/                  # Project specifications
-│   ├── mission.md          # Mission, vision, scope, success criteria
-│   ├── stack-tech.md       # Technology stack with justifications
-│   └── roadmap.md          # Development roadmap (7 phases, ~14 days)
-├── README.md               # This file
-└── ... (app code coming soon)
+├── src/
+│   ├── app/                # Next.js App Router (Pages & API)
+│   ├── components/         # Reusable UI components
+│   ├── utils/              # Supabase client and server utilities
+│   └── middleware.ts       # Auth protection middleware
+├── supabase/
+│   └── migrations/         # SQL schema and security policies
+├── specs/                  # Project specifications and roadmap
+├── public/                 # Static assets
+└── README.md               # This file
 ```
 
 ---
 
 ## 🗺️ Roadmap
 
-| Phase | Name | Duration |
-|-------|------|----------|
-| 0 | Project Setup & Planning | 1 day |
-| 1 | Authentication & Database | 2 days |
-| 2 | Sales Module | 2 days |
-| 3 | Expenses Module | 2 days |
-| 4 | Inventory Module | 2 days |
-| 5 | Dashboard & Analytics | 3 days |
-| 6 | Polish, Testing & Deployment | 2 days |
-
-**Estimated Total: ~14 working days (2–3 weeks)**
-
-> See [specs/roadmap.md](specs/roadmap.md) for detailed task breakdown.
+| Phase | Name | Status |
+|-------|------|--------|
+| 0 | Project Setup & Planning | ✅ Completed |
+| 1 | Authentication & Database | ✅ Completed |
+| 2 | Sales Module | ✅ Completed |
+| 3 | Client & Dues Module | ✅ Completed |
+| 4 | Expenses Module | 🏗️ In Progress |
+| 5 | Inventory Module | ✅ Completed |
+| 6 | Dashboard & Analytics | 🔲 Not Started |
+| 7 | Polish & Deployment | 🔲 Not Started |
 
 ---
 
 ## 🚀 Getting Started
 
-> ⚠️ **Project is in the planning phase.** The app has not been built yet. Check back soon!
-
 ### Prerequisites
 
 - Node.js 20+
 - npm
-- Git
-- Supabase account (free)
-- Vercel account (free)
+- Supabase project
 
-### Setup (coming soon)
+### Setup
 
-```bash
-# Clone the repository
-git clone https://github.com/your-username/goldenphoenix-bms.git
-cd goldenphoenix-bms
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/engrfayyazabbas/goldenphoenix-bms.git
+   cd goldenphoenix-bms
+   ```
 
-# Install dependencies
-npm install
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-# Set up environment variables
-cp .env.example .env.local
-# Add your Supabase URL and keys
+3. **Environment Variables**
+   Create a `.env.local` file with your Supabase credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
-# Run development server
-npm run dev
-```
+4. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
+   Visit `http://localhost:3000` to see the app.
 
 ---
 
 ## 📄 Documentation
 
-- [Mission & Vision](specs/mission.md) — What and why
-- [Tech Stack](specs/stack-tech.md) — How and with what
-- [Roadmap](specs/roadmap.md) — When and in what order
+- [Mission & Vision](specs/mission.md) — Project goals and scope
+- [Roadmap](specs/roadmap.md) — Detailed development timeline
+- [Tech Stack](specs/stack-tech.md) — Implementation details
 
 ---
 
