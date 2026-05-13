@@ -18,7 +18,7 @@ export async function PATCH(
     const body = await request.json();
     const { is_archived, name } = body;
 
-    const updateData: any = {};
+    const updateData: { is_archived?: boolean; name?: string } = {};
     if (is_archived !== undefined) updateData.is_archived = is_archived;
     if (name !== undefined) updateData.name = name;
 
