@@ -132,7 +132,7 @@ export default function ManageCategoriesModal({ onClose, onCategoriesChanged }: 
               ))}
               {categories.length === 0 && !loading && (
                 <tr>
-                  <td colSpan={3} style={{ textAlign: 'center', py: '2rem', color: '#666' }}>
+                  <td colSpan={3} style={{ textAlign: 'center', padding: '2rem 0', color: '#666' }}>
                     No categories found.
                   </td>
                 </tr>
