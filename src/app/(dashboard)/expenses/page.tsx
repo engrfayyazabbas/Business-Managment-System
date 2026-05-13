@@ -1,8 +1,13 @@
+import ExpenseDashboard from '@/components/expenses/ExpenseDashboard';
+
+export const metadata = {
+  title: 'Expenses - GoldenPhoenix',
+};
+
 export default function ExpensesPage() {
   return (
-    <div>
-      <h1>Expenses</h1>
-      <p>Manage your business expenses here.</p>
+    <div className="page-container">
+      <ExpenseDashboard />
     </div>
   );
 }
