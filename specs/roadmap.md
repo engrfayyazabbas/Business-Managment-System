@@ -72,7 +72,7 @@
 ---
 
 ## Phase 6 — Dashboard & Analytics *(Days 13–15)*
-🔲 **Not Started**
+📋 **Specs Ready**
 
 ### Goals
 - A comprehensive home dashboard showing key business metrics
