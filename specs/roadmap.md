@@ -10,7 +10,7 @@
 | 3 | Client & Dues Module | 3 days | ✅ Completed |
 | 4 | Expenses Module | 2 days | 🏗️ In Progress |
 | 5 | Inventory Module | 2 days | ✅ Completed |
-| 6 | Dashboard & Analytics | 3 days | 🔲 Not Started |
+| 6 | Dashboard & Analytics | 3 days | 📋 Specs Ready |
 | 7 | Polish, Testing & Deployment | 2 days | 🔲 Not Started |
 
 **Estimated Total: ~17 working days (3–4 weeks)**
