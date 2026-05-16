@@ -8,6 +8,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  TooltipItem,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
@@ -57,8 +58,8 @@ export default function ProfitLossChart({ data, loading }: ProfitLossChartProps)
       },
       tooltip: {
         callbacks: {
-          label: (context: { dataset: { label?: string }; parsed: { y: number } }) => 
-            `${context.dataset.label}: PKR ${context.parsed.y.toLocaleString()}`,
+          label: (context: TooltipItem<'bar'>) => 
+            `${context.dataset.label}: PKR ${(context.parsed.y || 0).toLocaleString()}`,
         },
       },
     },

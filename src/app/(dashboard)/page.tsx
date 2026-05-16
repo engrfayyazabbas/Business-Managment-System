@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import DateRangeFilter from '@/components/dashboard/DateRangeFilter';
-import SummaryCards from '@/components/dashboard/SummaryCards';
+import SummaryCards, { SalesSummary, ExpenseSummary, ClientDues, InventoryStatus } from '@/components/dashboard/SummaryCards';
 import SalesTrendChart from '@/components/dashboard/SalesTrendChart';
 import ExpenseBreakdownChart from '@/components/dashboard/ExpenseBreakdownChart';
 import ProfitLossChart from '@/components/dashboard/ProfitLossChart';
@@ -22,12 +22,12 @@ export default function DashboardPage() {
   });
 
   // Data states
-  const [salesSummary, setSalesSummary] = useState<{ totalRevenue: number; breakdown: Array<{ product: string; quantity: number; revenue: number; unit: string }> } | null>(null);
-  const [expenseSummary, setExpenseSummary] = useState<{ totalExpenses: number; breakdown: Array<{ category: string; amount: number }> } | null>(null);
+  const [salesSummary, setSalesSummary] = useState<SalesSummary | null>(null);
+  const [expenseSummary, setExpenseSummary] = useState<ExpenseSummary | null>(null);
   const [profitLoss, setProfitLoss] = useState<Array<{ date: string; revenue: number; expenses: number }>>([]);
   const [salesTrend, setSalesTrend] = useState<Array<{ date: string; revenue: number }>>([]);
-  const [clientDues, setClientDues] = useState<{ totalDues: number; clients: Array<{ id: string; name: string; currentDues: number }> } | null>(null);
-  const [inventoryStatus, setInventoryStatus] = useState<{ items: Array<{ id: string; name: string; unit: string; currentStock: number }> } | null>(null);
+  const [clientDues, setClientDues] = useState<ClientDues | null>(null);
+  const [inventoryStatus, setInventoryStatus] = useState<InventoryStatus | null>(null);
   const [recentActivity, setRecentActivity] = useState<Array<{ id: string; type: 'sale' | 'expense'; description: string; amount: number; date: string }>>([]);
 
   // Loading & Error states

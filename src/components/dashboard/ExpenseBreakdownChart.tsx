@@ -4,7 +4,8 @@ import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
-  Legend
+  Legend,
+  TooltipItem,
 } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 
@@ -54,7 +55,7 @@ export default function ExpenseBreakdownChart({ data, loading }: ExpenseBreakdow
       },
       tooltip: {
         callbacks: {
-          label: (context: { label?: string; parsed?: number }) => {
+          label: (context: TooltipItem<'doughnut'>) => {
             const label = context.label || '';
             const value = context.parsed || 0;
             return `${label}: PKR ${value.toLocaleString()}`;

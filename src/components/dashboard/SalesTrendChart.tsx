@@ -9,7 +9,8 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
+  TooltipItem,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
@@ -53,7 +54,7 @@ export default function SalesTrendChart({ data, loading }: SalesTrendChartProps)
       },
       tooltip: {
         callbacks: {
-          label: (context: { parsed: { y: number } }) => `PKR ${context.parsed.y.toLocaleString()}`,
+          label: (context: TooltipItem<'line'>) => `PKR ${(context.parsed.y || 0).toLocaleString()}`,
         },
       },
     },

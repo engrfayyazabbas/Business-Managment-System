@@ -2,7 +2,7 @@
 
 import { formatPKR } from '@/utils/format';
 
-interface SalesSummary {
+export interface SalesSummary {
   totalRevenue: number;
   totalQuantity: number;
   breakdown: Array<{
@@ -13,7 +13,7 @@ interface SalesSummary {
   }>;
 }
 
-interface ExpenseSummary {
+export interface ExpenseSummary {
   totalExpenses: number;
   breakdown: Array<{
     category: string;
@@ -21,7 +21,7 @@ interface ExpenseSummary {
   }>;
 }
 
-interface ClientDues {
+export interface ClientDues {
   totalDues: number;
   clients: Array<{
     id: string;
@@ -30,7 +30,7 @@ interface ClientDues {
   }>;
 }
 
-interface InventoryStatus {
+export interface InventoryStatus {
   items: Array<{
     id: string;
     name: string;
@@ -60,7 +60,7 @@ export default function SummaryCards({
   const netProfit = (salesSummary?.totalRevenue || 0) - (expenseSummary?.totalExpenses || 0);
   const isProfit = netProfit >= 0;
 
-  const renderCard = (title: string, value: string | number, subtext?: React.ReactNode, errorKey?: string) => {
+  const renderCard = (title: string, value: React.ReactNode, subtext?: React.ReactNode, errorKey?: string) => {
     if (loading) return (
       <div className="card summary-card loading">
         <h3>{title}</h3>

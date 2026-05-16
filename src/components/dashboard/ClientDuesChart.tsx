@@ -8,6 +8,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  TooltipItem,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
@@ -48,7 +49,7 @@ export default function ClientDuesChart({ data, loading }: ClientDuesChartProps)
       },
       tooltip: {
         callbacks: {
-          label: (context: { parsed: { x: number } }) => `PKR ${context.parsed.x.toLocaleString()}`,
+          label: (context: TooltipItem<'bar'>) => `PKR ${context.parsed.x?.toLocaleString() || 0}`,
         },
       },
     },

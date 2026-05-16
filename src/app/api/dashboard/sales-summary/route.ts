@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     let totalQuantity = 0;
     const breakdownMap: Record<string, { product: string; quantity: number; revenue: number; unit: string }> = {};
 
-    (data as SalesSummaryItem[] | null)?.forEach((sale) => {
+    (data as unknown as SalesSummaryItem[] | null)?.forEach((sale) => {
       const productName = sale.products?.name || 'Unknown';
       const unit = sale.products?.sales_unit || '';
       const revenue = Number(sale.total_amount) || 0;

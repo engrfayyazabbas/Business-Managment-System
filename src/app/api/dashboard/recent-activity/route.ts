@@ -1,6 +1,29 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
+interface SaleActivity {
+  id: string;
+  sale_date: string;
+  total_amount: number;
+  quantity: number;
+  created_at: string;
+  products: {
+    name: string;
+    sales_unit: string;
+  } | null;
+}
+
+interface ExpenseActivity {
+  id: string;
+  expense_date: string;
+  amount: number;
+  description: string;
+  created_at: string;
+  category: {
+    name: string;
+  } | null;
+}
+
 export async function GET() {
   const supabase = createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -13,7 +36,7 @@ export async function GET() {
     // Fetch last 10 sales
     const { data: recentSales, error: salesError } = await supabase
       .from('sales')
-      .select('id, sale_date, total_amount, quantity, products(name, sales_unit)')
+      .select('id, sale_date, total_amount, quantity, created_at, products(name, sales_unit)')
       .order('sale_date', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(10);
@@ -23,7 +46,7 @@ export async function GET() {
     // Fetch last 10 expenses
     const { data: recentExpenses, error: expensesError } = await supabase
       .from('expenses')
-      .select('id, expense_date, amount, description, category:expense_categories(name)')
+      .select('id, expense_date, amount, description, created_at, category:expense_categories(name)')
       .order('expense_date', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(10);
@@ -32,21 +55,21 @@ export async function GET() {
 
     // Merge and transform
     const activities = [
-      ...(recentSales?.map(s => ({
+      ...((recentSales as unknown as SaleActivity[] | null)?.map(s => ({
         id: s.id,
         type: 'sale',
-        description: `${s.products?.name} - ${s.quantity} ${s.products?.sales_unit}${s.quantity > 1 ? 's' : ''}`,
+        description: `${s.products?.name || 'Unknown Product'} - ${s.quantity} ${s.products?.sales_unit || ''}${s.quantity > 1 ? 's' : ''}`,
         amount: Number(s.total_amount),
         date: s.sale_date,
-        createdAt: s.created_at // Need this for sorting
+        createdAt: s.created_at
       })) || []),
-      ...(recentExpenses?.map(e => ({
+      ...((recentExpenses as unknown as ExpenseActivity[] | null)?.map(e => ({
         id: e.id,
         type: 'expense',
         description: e.description || e.category?.name || 'Expense',
         amount: Number(e.amount),
         date: e.expense_date,
-        createdAt: e.created_at // Need this for sorting
+        createdAt: e.created_at
       })) || [])
     ];
 
@@ -54,9 +77,7 @@ export async function GET() {
     activities.sort((a, b) => {
       const dateCompare = b.date.localeCompare(a.date);
       if (dateCompare !== 0) return dateCompare;
-      // Note: createdAt isn't selected in the queries above yet, let me fix that if needed
-      // Actually, I'll just sort by date and assume limit 10 is enough.
-      return 0;
+      return (b.createdAt || '').localeCompare(a.createdAt || '');
     });
 
     return NextResponse.json({
